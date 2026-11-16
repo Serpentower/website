@@ -1,0 +1,484 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Serpentower - software workshop: Unity assets and custom software</title>
+<meta name="description" content="Serpentower is a software workshop. We publish Unity assets on the Asset Store and build custom software for clients.">
+<link rel="canonical" href="https://serpentower.com/">
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#0D1330">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Serpentower">
+<meta property="og:title" content="Serpentower - software workshop">
+<meta property="og:description" content="Serpentower is a software workshop. We publish Unity assets on the Asset Store and build custom software for clients.">
+<meta property="og:url" content="https://serpentower.com/">
+<meta property="og:image" content="https://serpentower.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Serpentower - Built to scale. A software workshop.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://serpentower.com/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","@id":"https://serpentower.com/#org","name":"Serpentower","url":"https://serpentower.com/","logo":"https://serpentower.com/favicon-48.png","description":"Serpentower is a software workshop. We publish Unity assets on the Asset Store and build custom software for clients."}</script>
+<link rel="preload" href="assets/science-gothic-700-cond.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/geologica-400-600.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Science Gothic";src:url("assets/science-gothic-700-cond.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Geologica";src:url("assets/geologica-400-600.woff2") format("woff2");font-weight:400 600;font-display:swap}
+@font-face{font-family:"Plex Mono";src:url("assets/plex-mono-400.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Plex Mono";src:url("assets/plex-mono-500.woff2") format("woff2");font-weight:500;font-display:swap}
+
+:root{
+  --bg:#0D1330; --deep:#080C1E; --surface:#1A1F3A; --line:#2A2F47;
+  --text:#F4F4F1; --muted:#A9AEC2; --dim:#7E849E;
+  --violet:#A370FF; --link:#B794FF; --v200:#CDB7FF;
+  --max:1312px; --pad:clamp(20px,4.4vw,64px);
+  --display:"Science Gothic",Impact,sans-serif;
+  --body:"Geologica",system-ui,sans-serif;
+  --mono:"Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--bg);scroll-padding-top:72px;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+body{background:var(--bg);color:var(--text);font:400 17px/29px var(--body);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+:focus-visible{outline:2px solid var(--violet);outline-offset:3px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+.h{font-family:var(--display);font-weight:700;font-variation-settings:"wdth" 55;letter-spacing:0;line-height:1.08}
+.label{font:400 13px/20px var(--mono);color:var(--muted);letter-spacing:.02em}
+.label b{font-weight:500;color:var(--violet)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:10px;height:48px;padding:0 22px;border-radius:4px;font:600 15px/1 var(--body);transition:background-color .2s,color .2s,border-color .2s}
+.btn-primary{background:var(--violet);color:var(--bg)}
+.btn-primary:hover{background:var(--v200)}
+.btn-ghost{border:1px solid var(--line);color:var(--text)}
+.btn-ghost:hover{border-color:var(--muted)}
+.tlink{color:var(--link);font-weight:600;font-size:15px;border-bottom:1px solid transparent;transition:border-color .2s}
+.tlink:hover{border-color:var(--link)}
+
+/* header */
+.top{position:fixed;top:0;left:0;right:0;z-index:20;border-bottom:1px solid var(--line);background:var(--bg)}
+.top .wrap{display:flex;align-items:center;height:80px;gap:40px}
+.logo img{height:30px;width:auto}
+.nav{display:flex;gap:30px;margin-left:auto}
+.nav a{font-size:15px;color:var(--muted);transition:color .2s}
+.nav a:hover{color:var(--text)}
+.top .btn{height:40px;padding:0 18px;font-size:14px}
+.burger{display:none;background:none;border:1px solid var(--line);border-radius:4px;width:44px;height:40px;cursor:pointer;color:var(--text);margin-left:auto}
+.burger span{display:block;width:18px;height:2px;background:currentColor;margin:4px auto;transition:transform .25s,opacity .2s}
+.menu-open .burger span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.menu-open .burger span:nth-child(2){opacity:0}
+.menu-open .burger span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.mobile{display:none}
+
+/* hero */
+.hero{position:relative;height:clamp(760px,100svh,960px);overflow:hidden;border-bottom:1px solid var(--line)}
+.hero .art{position:absolute;width:min(56vw,820px);aspect-ratio:5/4;top:50%;right:max(0px,calc((100vw - 1320px)/2 - 40px));transform:translateY(-44%);pointer-events:none;user-select:none}
+.hero .art img{width:100%;height:100%;display:block}
+.hero .wrap{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:flex-start;padding-top:calc(80px + min(6vh,54px));padding-bottom:64px}
+.hero h1{margin-top:-.054em;font-size:clamp(52px,6.6vw,104px);line-height:.95;letter-spacing:0;max-width:7.5em}
+.hero .sub{margin-top:36px;max-width:460px;font-size:20px;line-height:32px;color:var(--muted)}
+.hero .ctas{margin-top:40px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* sections */
+section{border-bottom:1px solid var(--line)}
+.sec{padding:clamp(80px,10vw,144px) 0}
+.sec+.sec{padding-top:0}
+.sec-head{display:grid;grid-template-columns:repeat(12,1fr);gap:0 24px;margin-bottom:clamp(48px,6vw,80px)}
+.sec-head .label{grid-column:1/4;padding-top:10px}
+.sec-head .t{grid-column:4/13}
+.sec-head h2{font-size:clamp(36px,4.2vw,56px);line-height:1.04;max-width:16em}
+.sec-head p{margin-top:20px;max-width:600px;color:var(--muted);font-size:20px;line-height:32px}
+
+/* promises */
+.promises{display:grid;grid-template-columns:repeat(3,1fr)}
+.promise{padding:48px 40px 56px 0;border-right:1px solid var(--line)}
+.promise+.promise{padding-left:40px}
+.promise:last-child{border-right:0;padding-right:0}
+.promise .label{display:block;margin-bottom:20px}
+.promise h3{font-size:28px;line-height:32px;margin-bottom:14px}
+.promise p{color:var(--muted);font-size:16px;line-height:26px;max-width:34ch}
+
+/* directions */
+.dir{display:grid;grid-template-columns:repeat(12,1fr);gap:0 24px;padding:44px 0;border-top:1px solid var(--line)}
+.dir .ic{grid-column:1/4;display:flex;gap:18px;align-items:flex-start}
+.dir .ic svg{width:40px;height:40px;flex:none;fill:var(--violet)}
+.dir h3{grid-column:4/8;font-size:clamp(28px,2.6vw,36px);line-height:1.08}
+.dir .body{grid-column:8/13}
+.dir .body p{color:var(--muted)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+.tags li{font:400 13px/20px var(--mono);color:var(--text);border:1px solid var(--line);border-radius:3px;padding:3px 9px}
+.status{font:400 13px/20px var(--mono);color:var(--v200)}
+.status::before{content:"";display:inline-block;width:8px;height:8px;background:var(--violet);margin-right:8px;vertical-align:1px}
+
+/* process */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line)}
+.step{position:relative;padding:36px 32px 0 0}
+.step::before{content:"";position:absolute;top:-5px;left:0;width:9px;height:9px;background:var(--violet)}
+.step .n{font:500 13px/20px var(--mono);color:var(--violet);display:block;margin-bottom:28px}
+.step h3{font-size:28px;line-height:32px;margin-bottom:12px}
+.step p{color:var(--muted);font-size:16px;line-height:26px}
+.step .out{margin-top:20px;font:400 13px/20px var(--mono);color:var(--dim)}
+.step .out em{font-style:normal;color:var(--text)}
+
+/* assets */
+.assets{display:grid;grid-template-columns:repeat(12,1fr);gap:0 24px}
+.assets .label{grid-column:1/4;padding-top:6px}
+.assets .list{grid-column:4/13}
+.assets h2{font-size:clamp(30px,3vw,40px);line-height:1.1;margin-bottom:32px}
+.asset{display:grid;grid-template-columns:132px 1fr auto;gap:28px;align-items:center;padding:20px 0;border-top:1px solid var(--line)}
+.asset:last-child{border-bottom:1px solid var(--line)}
+.asset img{width:132px;height:74px;object-fit:cover;border-radius:4px;background:var(--surface)}
+.asset h3{font-family:var(--body);font-weight:600;font-size:18px;line-height:26px}
+.asset p{color:var(--muted);font-size:15px;line-height:24px}
+.asset .btn{height:40px;padding:0 20px;font-size:14px;white-space:nowrap}
+
+/* footer */
+footer{background:var(--deep);border-top:1px solid var(--line)}
+footer .wrap{padding-top:24px;padding-bottom:24px}
+footer .base{font:400 13px/20px var(--mono);color:var(--dim)}
+
+/* reveal */
+.motion .rv{opacity:0;transform:translateY(8px);transition:opacity .8s ease,transform .8s ease}
+.motion .rv.in{opacity:1;transform:none}
+.motion .hero .art{opacity:0;transition:opacity 1.4s ease .1s}
+.motion.loaded .hero .art{opacity:1}
+@media (prefers-reduced-motion:reduce){.motion .rv,.motion .hero .art{opacity:1!important;transform:none!important;transition:none!important}}
+
+/* tablet */
+@media (max-width:1120px){
+  .nav{gap:22px}
+  .top .wrap{gap:28px}
+}
+@media (max-width:980px){
+  .nav{display:none}
+  .burger{display:block}
+  .mobile{display:block;position:fixed;inset:80px 0 0 0;background:var(--bg);z-index:19;padding:24px var(--pad) 40px;border-top:1px solid var(--line);transform:translateY(-8px);opacity:0;visibility:hidden;transition:opacity .25s,transform .25s,visibility .25s;overflow:auto}
+  .menu-open .mobile{opacity:1;visibility:visible;transform:none}
+  .menu-open .top{position:fixed;background:var(--bg)}
+  .mobile nav a{display:block;font-family:var(--display);font-weight:700;font-variation-settings:"wdth" 55;font-size:36px;line-height:1;padding:16px 0;border-bottom:1px solid var(--line)}
+  .mobile .btn{margin-top:28px;width:100%;justify-content:center}
+  .sec-head,.assets,.dir{grid-template-columns:1fr}
+  .sec-head .label,.sec-head .t,.assets .label,.assets .list,.dir .ic,.dir h3,.dir .body{grid-column:1/-1}
+  .sec-head .label,.assets .label{margin-bottom:18px;padding-top:0}
+  .dir{gap:16px}
+  .steps{grid-template-columns:1fr 1fr;row-gap:48px}
+}
+@media (max-width:720px){
+  .top .wrap{height:68px}
+  .mobile{inset:68px 0 0 0}
+  .logo img{height:26px}
+  .hero .sub{font-size:18px;line-height:28px;margin-top:24px}
+  .hero .ctas{margin-top:28px}
+  .hero .ctas .btn{flex:1 1 auto;justify-content:center}
+  .promises{grid-template-columns:1fr}
+  .promise,.promise+.promise{padding:32px 0;border-right:0;border-bottom:1px solid var(--line)}
+  .promise:last-child{border-bottom:0}
+  .steps{grid-template-columns:1fr;row-gap:0;border-top:0;border-left:1px solid var(--line);margin-left:4px}
+  .step{padding:0 0 44px 28px}
+  .step::before{top:2px;left:-5px}
+  .step .n{margin-bottom:12px}
+  .asset{grid-template-columns:96px 1fr;gap:16px 18px}
+  .asset img{width:96px;height:54px}
+  .asset .btn{grid-column:2;justify-self:start}
+}
+@media (min-width:1101px){.hero .art{z-index:0}.hero .wrap{justify-content:center;padding-top:calc(var(--artw)*.096);padding-bottom:0}}
+@media (max-width:1100px){
+  .hero{height:auto;max-height:none;min-height:0;display:flex;flex-direction:column}
+  .hero .wrap{height:auto;padding-top:clamp(116px,16vw,180px);padding-bottom:0;order:1}
+  .hero h1{font-size:clamp(48px,11vw,96px)}
+  .hero .art{order:2;position:relative;top:auto;right:auto;transform:none;width:min(100%,720px);margin:32px auto 40px}
+}
+
+/* ===== glass variant ===== */
+:root{--glass:rgba(26,31,58,.55);--glass-strong:rgba(13,19,48,.62);--glass-line:rgba(244,244,241,.12);--blur:blur(22px)}
+body{background:var(--bg)}
+.orbs{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none;contain:strict}
+.orbs i{position:absolute;display:block;border-radius:50%;background:radial-gradient(closest-side,rgba(163,112,255,.34),rgba(163,112,255,.16) 55%,rgba(163,112,255,0))}
+.orbs i:nth-child(1){width:46vw;height:46vw;max-width:680px;max-height:680px;top:-12vw;right:-10vw}
+.orbs i:nth-child(2){width:30vw;height:30vw;max-width:440px;max-height:440px;bottom:-8vw;left:-8vw;background:radial-gradient(closest-side,rgba(91,47,194,.55),rgba(91,47,194,.25) 55%,rgba(91,47,194,0))}
+.fluid{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:0;transition:opacity 1.2s ease}
+.has-fluid .fluid{opacity:1}
+.has-fluid .orbs{visibility:hidden;transition:visibility 0s 1.2s}
+main,footer{position:relative;z-index:1}
+.hero{--artw:min(46vw,660px,calc(min(100%,var(--max)) - 2*var(--pad) - min(6.6vw,104px)*5.9 - 48px))}
+.hero .art{width:var(--artw);right:calc((100% - min(100%,var(--max)))/2 + var(--pad))}
+@media (max-width:1100px){.hero .art{width:auto;right:auto;margin:32px var(--pad) 40px}}
+.top{top:0;left:0;right:0;background:none;border:0;transform:translateY(16px);transition:transform .4s var(--ease)}
+.menu-open .top{background:none}
+:root{--ease:cubic-bezier(.22,.8,.24,1);--side:calc((100% - min(100%,var(--max)))/2 + var(--pad));--shell:calc(min(100%,var(--max)) - 2*var(--pad))}
+.top::before{content:"";position:absolute;top:0;bottom:0;left:var(--side);right:var(--side);border:1px solid var(--glass-line);border-radius:22px;background:rgba(26,31,58,.5);-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);transition:left .4s var(--ease),right .4s var(--ease),border-radius .4s var(--ease),border-color .4s var(--ease)}
+.top .wrap{position:relative;height:42px;max-width:none;padding:0 calc(var(--side) + 24px)}
+.logo img{height:22px}
+.burger{border-radius:999px;border-color:var(--glass-line);width:38px;height:30px}
+.burger span{width:16px;margin:3px auto}
+.menu-open .burger span:nth-child(1){transform:translateY(5px) rotate(45deg)}
+.menu-open .burger span:nth-child(3){transform:translateY(-5px) rotate(-45deg)}
+@media (max-width:980px){.top .wrap{padding:0 calc(var(--pad) + 5px) 0 calc(var(--pad) + 20px)}.mobile{background:rgba(20,25,52,.86)!important;-webkit-backdrop-filter:var(--blur);backdrop-filter:var(--blur);top:66px;left:0;right:0;bottom:auto;margin:0 auto;width:var(--shell);border:1px solid var(--glass-line);border-radius:20px;padding:12px 24px 24px}}
+@media (max-width:720px){.top{transform:translateY(10px)}.top .wrap{height:40px;padding:0 calc(var(--pad) + 4px) 0 calc(var(--pad) + 16px)}.logo img{height:20px}.mobile{top:58px}}
+.stuck .top{transform:none}
+.stuck .top::before{left:-1px;right:-1px;border-radius:0;border-color:transparent transparent var(--glass-line)}
+@media (max-width:980px){.stuck .mobile{top:50px}}
+@media (max-width:720px){.stuck .mobile{top:48px}}
+.hero,section{border-bottom:0}
+.hero{background:transparent}
+.hero .art{background:var(--glass);border:1px solid var(--glass-line);border-radius:20px;padding:16px}
+.g{position:relative;background:var(--glass);border:1px solid var(--glass-line);border-radius:16px;transition:border-color .25s,background-color .25s}
+.g::after{content:"";position:absolute;inset:-1px;border-radius:inherit;box-shadow:0 14px 44px -16px rgba(163,112,255,.45);opacity:0;transition:opacity .25s;pointer-events:none}
+.motion .g.rv{transition:opacity .8s ease,transform .8s ease,border-color .25s,background-color .25s}
+@media (hover:hover){.g:hover,.assets .list .asset:hover{border-color:rgba(163,112,255,.55);background-color:rgba(36,41,78,.66)}.g:hover::after{opacity:1}}
+.promises{gap:20px}
+.promise,.promise+.promise,.promise:last-child{padding:36px 32px 40px;border:1px solid var(--glass-line)}
+.dir{border-top:1px solid var(--glass-line);padding:36px 32px;margin-top:20px}
+.steps{gap:20px;border-top:0}
+.step{padding:32px 28px 32px}
+.step::before{top:32px;left:auto;right:28px}
+.assets .list .asset{padding:20px 24px;margin-top:16px;border:1px solid var(--glass-line)}
+.asset:last-child{border-bottom:1px solid var(--glass-line)}
+.tags li{border-color:var(--glass-line);background:rgba(244,244,241,.04)}
+footer{background:var(--glass-strong);border-top:1px solid var(--glass-line)}
+.btn-primary{border-radius:999px}
+@media (max-width:980px){.dir{gap:16px}}
+@media (max-width:720px){
+  .promise,.promise+.promise,.promise:last-child{padding:28px 22px;border:1px solid var(--glass-line)}
+  .steps{gap:16px;border-left:0;margin-left:0}
+  .step{padding:28px 22px}
+  .step::before{top:30px;left:auto;right:22px}
+  .dir{padding:28px 22px}
+  .assets .list .asset{padding:16px}
+  .hero .art{padding:10px;border-radius:14px}
+}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .top::before{background:var(--bg)}
+}
+
+/* contacts */
+.social{display:flex;gap:6px;align-items:center}
+.social a{display:flex;align-items:center;justify-content:center;width:32px;height:32px;color:var(--violet);transition:color .2s}
+.social a:hover{color:var(--v200)}
+.social svg{width:20px;height:20px;fill:currentColor}
+.top .social{margin-left:-12px}
+.mobile .contact{display:flex;justify-content:space-between;align-items:center;margin-top:20px}
+.mail{font:400 14px/20px var(--mono);color:var(--muted);transition:color .2s}
+.mail:hover{color:var(--text)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px 24px;flex-wrap:wrap}
+@media (max-width:980px){.top .social{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-ig" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M8 2h8a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6V8a6 6 0 0 1 6-6Zm0 2a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4h8a4 4 0 0 0 4-4V8a4 4 0 0 0-4-4H8Zm4 3.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm0 2a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5Zm5.2-3.9a1.2 1.2 0 1 1 0 2.4 1.2 1.2 0 0 1 0-2.4Z"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 12a10 10 0 1 0 20 0a10 10 0 1 0-20 0ZM10.4 21.871V13.4H8V10.4H10.4V8.4C10.4 5.8 11.8 4.4 14.3 4.4C15.3 4.4 16.2 4.5 16.5 4.5V7.1H15C13.8 7.1 13.5 7.7 13.5 8.5V10.4H16.4L16 13.4H13.5V21.887A10 10 0 0 1 10.4 21.871Z"/></symbol>
+  <symbol id="i-yt" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M5 4.5h14A3 3 0 0 1 22 7.5v9a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3v-9a3 3 0 0 1 3-3Zm5 4v7l6-3.5-6-3.5Z"/></symbol>
+  <symbol id="i-bs" viewBox="0 0 24 24"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z"/></symbol>
+  <symbol id="i-li" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2ZM5.5 9.5h2.6v9H5.5ZM6.8 5.1a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10.3 9.5h2.5v1.3c.4-.8 1.4-1.5 2.9-1.5 2.6 0 3.1 1.7 3.1 3.9v5.3h-2.6v-4.7c0-1.1-.1-2.3-1.6-2.3s-1.7 1.1-1.7 2.2v4.8h-2.6Z"/></symbol>
+</svg>
+<div class="orbs" aria-hidden="true"><i></i><i></i></div>
+<canvas class="fluid" aria-hidden="true"></canvas>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Serpentower home"><img src="assets/logo.svg" alt="Serpentower" width="155" height="30"></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#services" data-i18n="nav.services">Services</a>
+      <a href="#assets" data-i18n="nav.assets">Assets</a>
+      <a href="#process" data-i18n="nav.process">Process</a>
+    </nav>
+    <div class="social" data-social></div>
+    <button class="burger" type="button" aria-expanded="false" aria-controls="mobile" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="mobile" id="mobile">
+  <nav aria-label="Mobile">
+    <a href="#services" data-i18n="nav.services">Services</a>
+    <a href="#assets" data-i18n="nav.assets">Assets</a>
+    <a href="#process" data-i18n="nav.process">Process</a>
+  </nav>
+  <div class="contact"><a class="mail" data-email></a><div class="social" data-social></div></div>
+</div>
+
+<main id="top">
+<section class="hero" aria-labelledby="h1">
+  <div class="art" aria-hidden="true"><img src="assets/hero.svg" alt="" width="1200" height="960"></div>
+  <div class="wrap">
+    <h1 class="h" id="h1" data-i18n-html="hero.h1"><span class="sr-only">Serpentower, a software workshop: </span>Built to scale.</h1>
+    <p class="sub" data-i18n="hero.sub">A software workshop. We build Unity assets and custom software for clients.</p>
+    <div class="ctas">
+      <a class="btn btn-primary" href="#services" data-i18n="cta.what">What we build</a>
+    </div>
+  </div>
+</section>
+
+<section aria-labelledby="s-promises">
+  <div class="wrap">
+    <h2 class="sr-only" id="s-promises">Our promises</h2>
+    <div class="promises">
+      <div class="promise g rv">
+        <span class="label"><b>&#9632;</b>&nbsp; <span data-i18n="p1.k">Stability</span></span>
+        <h3 class="h" data-i18n="p1.h">A plan before code</h3>
+        <p data-i18n="p1.p">You see the structure of the project on paper and agree to it before we write the first line.</p>
+      </div>
+      <div class="promise g rv">
+        <span class="label"><b>&#9632;</b>&nbsp; <span data-i18n="p2.k">Reliability</span></span>
+        <h3 class="h" data-i18n="p2.h">Proven parts, no experiments</h3>
+        <p data-i18n="p2.p">We assemble from tested, ready-made solutions. Your budget is not our playground.</p>
+      </div>
+      <div class="promise g rv">
+        <span class="label"><b>&#9632;</b>&nbsp; <span data-i18n="p3.k">Might</span></span>
+        <h3 class="h" data-i18n="p3.h">Room to grow</h3>
+        <p data-i18n="p3.p">Documented, tested code that a new feature, a new team or ten times the traffic will not break.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="services" aria-labelledby="s-services">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label"><b>01</b> / <span data-i18n="l.services">Services</span></span>
+      <div class="t">
+        <h2 class="h" id="s-services" data-i18n="services.h">Two directions, one way of building.</h2>
+        <p data-i18n="services.p">Whether it is software for a client or a tool for game developers, it gets the same foundation: clear structure, proven parts, open communication.</p>
+      </div>
+    </div>
+    <div class="dir g rv">
+      <div class="ic"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="4" width="36" height="8"/><rect x="2" y="15" width="16" height="21"/><rect x="21" y="15" width="17" height="9"/><rect x="21" y="27" width="17" height="9"/></svg></div>
+      <h3 class="h" data-i18n="d1.h">Client software</h3>
+      <div class="body">
+        <p data-i18n="d1.p">Custom applications and integrations, plus Unity and game work for studios.</p>
+        <ul class="tags"><li data-i18n="d1.t3">Web apps</li><li data-i18n="d1.t4">Integrations</li><li>Unity</li></ul>
+      </div>
+    </div>
+    <div class="dir g rv">
+      <div class="ic"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="2" width="11" height="10"/><rect x="27" y="2" width="11" height="10"/><rect x="14.5" y="2" width="11" height="10"/><rect x="2" y="15" width="36" height="9"/><rect x="12" y="27" width="16" height="11"/></svg></div>
+      <h3 class="h" data-i18n="d2.h">Unity assets</h3>
+      <div class="body">
+        <p data-i18n="d2.p">Tools we use ourselves, published on the Unity Asset Store. Small, focused and maintained, so your game is built on parts that keep working.</p>
+        <ul class="tags"><li>Unity Asset Store</li><li>2D / 3D</li><li data-i18n="d2.t3">Physics</li><li data-i18n="d2.t4">Behaviours</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="process" aria-labelledby="s-process">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label"><b>02</b> / <span data-i18n="l.process">How we work</span></span>
+      <div class="t">
+        <h2 class="h" id="s-process" data-i18n="process.h">We work like architects, not lone heroes.</h2>
+        <p data-i18n="process.p">Four steps, each ending with something you can hold: a document, a plan, a working build, a handover.</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step g rv">
+        <span class="n">01</span>
+        <h3 class="h" data-i18n="s1.h">Survey</h3>
+        <p data-i18n="s1.p">We study the goal, the users and what already exists, and name the risks out loud.</p>
+        <p class="out"><span data-i18n="out">You get:</span> <em data-i18n="s1.o">a written brief</em></p>
+      </div>
+      <div class="step g rv">
+        <span class="n">02</span>
+        <h3 class="h" data-i18n="s2.h">Blueprint</h3>
+        <p data-i18n="s2.p">Structure, stack and ready-made parts are chosen first. You approve the plan and the price.</p>
+        <p class="out"><span data-i18n="out">You get:</span> <em data-i18n="s2.o">architecture and estimate</em></p>
+      </div>
+      <div class="step g rv">
+        <span class="n">03</span>
+        <h3 class="h" data-i18n="s3.h">Build</h3>
+        <p data-i18n="s3.p">Short stages with a working result after each one. You always see where the project stands.</p>
+        <p class="out"><span data-i18n="out">You get:</span> <em data-i18n="s3.o">a build every stage</em></p>
+      </div>
+      <div class="step g rv">
+        <span class="n">04</span>
+        <h3 class="h" data-i18n="s4.h">Hand over</h3>
+        <p data-i18n="s4.p">Documentation, tests and access, so the project can grow with us or without us.</p>
+        <p class="out"><span data-i18n="out">You get:</span> <em data-i18n="s4.o">code you own</em></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="assets" aria-labelledby="s-assets">
+  <div class="wrap">
+    <div class="assets">
+      <span class="label rv"><b>03</b> / <span data-i18n="l.assets">Assets</span></span>
+      <div class="list">
+        <h2 class="h rv" id="s-assets" data-i18n="assets.h">On the Unity Asset Store</h2>
+        <div class="asset g rv">
+          <img src="assets/rope-bundle-2d.webp" alt="Rope Bundle 2D cover" width="264" height="148" loading="lazy" decoding="async">
+          <div><h3>Rope Bundle 2D</h3><p data-i18n="a1.p">Ropes and chains for 2D games: physics, weight and cutting.</p></div>
+          <a class="btn btn-primary" href="https://assetstore.unity.com/packages/tools/physics/rope-bundle-2d-246329" data-i18n="a.link">View on Asset Store</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="base">&copy; 2026 Serpentower</p>
+    <a class="mail" data-email></a>
+    <div class="social" data-social></div>
+  </div>
+</footer>
+
+<script>
+/* ===== Контакти: міняти тут. Порожній рядок '' - іконка не показується. ===== */
+var CONTACTS = {
+  email:     'support@serpentower.com',
+  instagram: 'https://www.instagram.com/serpentower',
+  youtube:   'https://www.youtube.com/@serpentowergames',
+  linkedin:  'https://www.linkedin.com/company/serpentower',
+  bluesky:   'https://bsky.app/profile/serpentower.bsky.social'
+};
+/* ============================================================================ */
+(function(){
+  var NETS=[['instagram','Instagram','i-ig'],['youtube','YouTube','i-yt'],['linkedin','LinkedIn','i-li'],['bluesky','Bluesky','i-bs'],['facebook','Facebook','i-fb']];
+  var html=NETS.filter(function(n){return CONTACTS[n[0]]}).map(function(n){
+    return '<a href="'+CONTACTS[n[0]]+'" aria-label="'+n[1]+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#'+n[2]+'"/></svg></a>';
+  }).join('');
+  document.querySelectorAll('[data-social]').forEach(function(el){el.innerHTML=html});
+  document.querySelectorAll('[data-email]').forEach(function(el){
+    if(!CONTACTS.email){el.remove();return}
+    el.href='mailto:'+CONTACTS.email;el.textContent=CONTACTS.email;
+  });
+})();
+</script>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!reduce&&'IntersectionObserver' in window){
+    root.classList.add('motion');
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rv').forEach(function(el){io.observe(el)});
+    requestAnimationFrame(function(){requestAnimationFrame(function(){root.classList.add('loaded')})});
+  }
+
+
+  var stuckOn=false,tick=0;
+  function stick(){tick=0;var s=scrollY>58;if(s!==stuckOn){stuckOn=s;root.classList.toggle('stuck',s)}}
+  addEventListener('scroll',function(){if(!tick)tick=requestAnimationFrame(stick)},{passive:true});
+  stick();
+
+  var burger=document.querySelector('.burger'),mob=document.getElementById('mobile');
+  function closeMenu(){document.body.classList.remove('menu-open');burger.setAttribute('aria-expanded','false')}
+  burger.addEventListener('click',function(){var o=document.body.classList.toggle('menu-open');burger.setAttribute('aria-expanded',o?'true':'false')});
+  mob.querySelectorAll('a').forEach(function(a){a.addEventListener('click',closeMenu)});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeMenu()});
+})();
+</script>
+<script src="assets/fluid.js" defer></script>
+</body>
+</html>
