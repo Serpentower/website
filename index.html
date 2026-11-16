@@ -270,6 +270,27 @@ footer{background:var(--glass-strong);border-top:1px solid var(--glass-line)}
 .mail:hover{color:var(--text)}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px 24px;flex-wrap:wrap}
 @media (max-width:980px){.top .social{display:none}}
+
+/* contact form */
+.cform{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:36px 32px}
+.cform .full{grid-column:1/-1}
+#contact .wrap{display:grid;grid-template-columns:repeat(12,1fr);column-gap:24px}
+#contact .sec-head{grid-column:1/-1}
+#contact .cform{grid-column:4/13}
+@media (max-width:980px){#contact .cform{grid-column:1/-1}}
+.field label{display:block;font:400 13px/20px var(--mono);color:var(--muted);margin-bottom:8px}
+.field input,.field textarea{width:100%;font:400 16px/24px var(--body);color:var(--text);background:rgba(244,244,241,.04);border:1px solid var(--glass-line);border-radius:10px;padding:12px 14px;transition:border-color .2s,background-color .2s}
+.field textarea{min-height:160px;resize:vertical}
+.field input::placeholder,.field textarea::placeholder{color:var(--dim)}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--violet);background:rgba(244,244,241,.07)}
+.cform .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.cform .send{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.cform .btn{border:0;cursor:pointer}
+.cform .btn[disabled]{opacity:.6;cursor:default}
+.cform .msg{font:400 14px/20px var(--mono);color:var(--muted)}
+.cform .msg.ok{color:var(--v200)}
+.cform .msg.err{color:#FF9A9A}
+@media (max-width:720px){.cform{grid-template-columns:1fr;padding:28px 22px}.cform .btn{width:100%;justify-content:center}}
 </style>
 </head>
 <body>
@@ -422,6 +443,25 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:1
   </div>
 </section>
 
+<section class="sec" id="contact" aria-labelledby="s-contact">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <span class="label"><b>04</b> / <span>Contact</span></span>
+      <div class="t">
+        <h2 class="h" id="s-contact">Contact us</h2>
+        <p>Questions about our assets, a project or anything else. We reply by e-mail.</p>
+      </div>
+    </div>
+    <form class="cform g rv" id="cform" novalidate>
+      <div class="field"><label for="cf-name">Name</label><input id="cf-name" name="name" type="text" autocomplete="name" placeholder="Your name" required maxlength="120"></div>
+      <div class="field"><label for="cf-email">E-mail</label><input id="cf-email" name="email" type="email" autocomplete="email" placeholder="you@company.com" required maxlength="200"></div>
+      <div class="field full"><label for="cf-msg">Message</label><textarea id="cf-msg" name="message" placeholder="Your question or message" required maxlength="5000"></textarea></div>
+      <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <div class="send full"><button class="btn btn-primary" type="submit">Send message</button><p class="msg" role="status" aria-live="polite"></p></div>
+    </form>
+  </div>
+</section>
+
 </main>
 
 <footer>
@@ -439,7 +479,10 @@ var CONTACTS = {
   instagram: 'https://www.instagram.com/serpentower',
   youtube:   'https://www.youtube.com/@serpentowerdev',
   linkedin:  'https://www.linkedin.com/company/serpentower',
-  bluesky:   'https://bsky.app/profile/serpentower.bsky.social'
+  bluesky:   'https://bsky.app/profile/serpentower.bsky.social',
+  /* Ключ з web3forms.com (заявки йдуть на пошту, під яку він виданий).
+     Порожній - форма відкриває поштовий клієнт з листом на email вище. */
+  web3forms: 'fe8600f1-dd0b-46c5-845b-964d4ac88123'
 };
 /* ============================================================================ */
 (function(){
@@ -451,6 +494,32 @@ var CONTACTS = {
   document.querySelectorAll('[data-email]').forEach(function(el){
     if(!CONTACTS.email){el.remove();return}
     el.href='mailto:'+CONTACTS.email;el.textContent=CONTACTS.email;
+  });
+
+  var f=document.getElementById('cform');
+  if(!f)return;
+  var el=f.elements,btn=f.querySelector('button'),msg=f.querySelector('.msg');
+  function say(t,c){msg.textContent=t;msg.className='msg'+(c?' '+c:'')}
+  f.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(el.botcheck.checked)return;
+    var bad=[el.name,el.email,el.message].filter(function(i){return !i.value.trim()||!i.checkValidity()});
+    if(bad.length){say('Please fill in all fields with a valid e-mail.','err');bad[0].focus();return}
+    var d={name:el.name.value.trim(),email:el.email.value.trim(),message:el.message.value.trim()};
+    if(!CONTACTS.web3forms){
+      location.href='mailto:'+CONTACTS.email+'?subject='+encodeURIComponent('Message from '+d.name)+'&body='+encodeURIComponent(d.message+'\n\n'+d.name+' <'+d.email+'>');
+      return;
+    }
+    btn.disabled=true;say('Sending…');
+    fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+      body:JSON.stringify({access_key:CONTACTS.web3forms,subject:'serpentower.com: message from '+d.name,from_name:'Serpentower site',name:d.name,email:d.email,message:d.message})})
+    .then(function(r){return r.json()})
+    .then(function(r){
+      if(!r.success)throw 0;
+      f.reset();say('Thank you. We will reply by e-mail.','ok');
+    })
+    .catch(function(){say('Could not send. Write to '+CONTACTS.email+' instead.','err')})
+    .then(function(){btn.disabled=false});
   });
 })();
 </script>
